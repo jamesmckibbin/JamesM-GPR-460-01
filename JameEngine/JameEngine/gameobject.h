@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "transform.h"
 #include "rectanglerenderer.h"
 #include "rectanglecollider.h"
 #include "playercontroller.h"
@@ -14,18 +13,38 @@ class GameObject
 public:
     GameObject()
     {
-        // Initialize all components to nullptr
+        transform.position = {0.f, 0.f, 0.f};
+        renderer = nullptr;
+        /*collider = nullptr;
+        player = nullptr;
+        colorChanger = nullptr;*/
     }
 
-    RectangleRenderer* CreateRenderer(...);
-    RectangleCollider* CreateCollider(...);
-    PlayerController* CreatePlayerController(...);
-    ColliderColorChanger* CreateColliderColorChanger(...);
+    GameObject(Vector3 pos)
+    {
+        transform.position = pos;
+        renderer = nullptr;
+        /*collider = nullptr;
+        player = nullptr;
+        colorChanger = nullptr;*/
+    }
+
+    ~GameObject() {
+        delete renderer;
+        renderer = nullptr;
+    }
+
+    Transform transform;
+
+    RectangleRenderer* GetRenderer() { return renderer; }
+    RectangleRenderer* CreateRenderer(float width, float height, Vector3 color);
+    /*RectangleCollider* CreateCollider();
+    PlayerController* CreatePlayerController();
+    ColliderColorChanger* CreateColliderColorChanger();*/
 
 protected:
-    Transform transform;
     RectangleRenderer* renderer;
-    RectangleCollider* collider;
+    /*RectangleCollider* collider;
     PlayerController* player;
-    ColliderColorChanger* colorChanger;
+    ColliderColorChanger* colorChanger;*/
 };
