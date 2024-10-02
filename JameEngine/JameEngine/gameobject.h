@@ -38,13 +38,14 @@ public:
 
     RectangleRenderer* GetRenderer() { return renderer; }
     RectangleRenderer* CreateRenderer(float width, float height, Vector3 color);
-    /*RectangleCollider* CreateCollider();
+    // RectangleCollider* CreateCollider();
+    PlayerController* GetPlayerController() { return player; }
     PlayerController* CreatePlayerController();
-    ColliderColorChanger* CreateColliderColorChanger();*/
+    // ColliderColorChanger* CreateColliderColorChanger();
 
 protected:
     RectangleRenderer* renderer;
-    /*RectangleCollider* collider;
+    //RectangleCollider* collider;
     PlayerController* player;
-    ColliderColorChanger* colorChanger;*/
+    // ColliderColorChanger* colorChanger;
 };

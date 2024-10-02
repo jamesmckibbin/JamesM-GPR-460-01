@@ -1,6 +1,20 @@
 #include "rectanglerenderer.h"
 
-void RectangleRenderer::Update() {
+RectangleRenderer::RectangleRenderer()
+{
+	width = 10.f;
+	height = 10.f;
+	color = { 255.f, 255.f, 255.f };
+}
+
+RectangleRenderer::RectangleRenderer(float newwidth, float newheight, Vector3 newcolor)
+{
+	width = newwidth;
+	height = newheight;
+	color = newcolor;
+}
+
+void RectangleRenderer::Update(float dt) {
 	// do nothing
 }
 

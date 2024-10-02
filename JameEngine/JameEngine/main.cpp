@@ -23,35 +23,17 @@ int main(int argc, char* argv[])
 
     GameObject* player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f });
+    player->CreatePlayerController();
 
     while (loop) {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            // INPUT
-            const Uint8* keyboard = SDL_GetKeyboardState(NULL);
-
-            // EXIT
-            if (keyboard[SDL_SCANCODE_ESCAPE]) {
-                loop = false;
-            }
-
-            // VERTICAL
-            if (keyboard[SDL_SCANCODE_W]) {
-                player->transform.position.y -= deltatime;
-            }
-            else if (keyboard[SDL_SCANCODE_S]) {
-                player->transform.position.y += deltatime;
-            }
-
-            // HORIZONTAL
-            if (keyboard[SDL_SCANCODE_A]) {
-                player->transform.position.x -= deltatime;
-            }
-            else if (keyboard[SDL_SCANCODE_D]) {
-                player->transform.position.x += deltatime;
-            }
             // UPDATE
+            const Uint8* keyboard = SDL_GetKeyboardState(NULL);
+            // INPUT - EXIT
+
+            player->GetPlayerController()->Update(deltatime);
 
             // DRAW
             SDL_RenderClear(renderer);
