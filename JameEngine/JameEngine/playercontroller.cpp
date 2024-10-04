@@ -2,21 +2,29 @@
 #include <SDL.h>
 #include "gameobject.h"
 
-void PlayerController::Update(GameObject* playerobj, float dt)
+PlayerController::PlayerController(GameObject* obj, float moveSpeed)
 {
+    parentGO = obj;
+    speed = moveSpeed;
+}
+
+void PlayerController::Update(float dt)
+{
+    const Uint8* keyboard = SDL_GetKeyboardState(NULL);
+
     // VERTICAL
     if (keyboard[SDL_SCANCODE_W]) {
-        player->transform.position.y -= dt;
+        parentGO->transform.position.y -= dt * speed;
     }
     else if (keyboard[SDL_SCANCODE_S]) {
-        player->transform.position.y += dt;
+        parentGO->transform.position.y += dt * speed;
     }
 
     // HORIZONTAL
     if (keyboard[SDL_SCANCODE_A]) {
-        player->transform.position.x -= dt;
+        parentGO->transform.position.x -= dt * speed;
     }
     else if (keyboard[SDL_SCANCODE_D]) {
-        player->transform.position.x += dt;
+        parentGO->transform.position.x += dt * speed;
     }
 }

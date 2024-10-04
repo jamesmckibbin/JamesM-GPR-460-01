@@ -1,13 +1,13 @@
 #include "rectanglerenderer.h"
 
-RectangleRenderer::RectangleRenderer()
+RectangleRenderer::RectangleRenderer(GameObject* obj)
 {
 	width = 10.f;
 	height = 10.f;
 	color = { 255.f, 255.f, 255.f };
 }
 
-RectangleRenderer::RectangleRenderer(float newwidth, float newheight, Vector3 newcolor)
+RectangleRenderer::RectangleRenderer(GameObject* obj, float newwidth, float newheight, Vector3 newcolor)
 {
 	width = newwidth;
 	height = newheight;

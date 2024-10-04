@@ -4,9 +4,8 @@
 
 class PlayerController : public Component {
 public:
+	PlayerController(GameObject* obj, float moveSpeed);
 	void Update(float dt) override;
 private:
-
-	void Update(GameObject* playerobj, float dt);
-
+	float speed;
 };

@@ -1,10 +1,15 @@
 #pragma once
 
+#include "SDL.h"
+
 #include "component.h"
 
-class RectangleCollider {
+class RectangleCollider : public Component {
 public:
-	RectangleCollider();
+	RectangleCollider(GameObject* obj);
+	RectangleCollider(GameObject* obj, float width, float height);
+
+	void Update(float deltaTime) override;
 private:
-	SDL_Rect rect;
+	SDL_Rect colRect;
 };

@@ -2,10 +2,18 @@
 
 RectangleRenderer* GameObject::CreateRenderer(float width, float height, Vector3 color)
 {
-    return new RectangleRenderer(width, height, color);
+    renderer = new RectangleRenderer(this, width, height, color);
+    return renderer;
 }
 
-PlayerController* GameObject::CreatePlayerController()
+RectangleCollider* GameObject::CreateCollider(float width, float height)
 {
-    return new PlayerController();
+    collider = new RectangleCollider(this, width, height);
+    return collider;
+}
+
+PlayerController* GameObject::CreatePlayerController(float moveSpeed)
+{
+    player = new PlayerController(this, moveSpeed);
+    return player;
 }

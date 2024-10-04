@@ -1,8 +1,13 @@
 #pragma once
 
-#include "transform.h"
+class GameObject;
 
 class Component {
 public:
+	Component() = default;
+
 	virtual void Update(float dt) = 0;
+
+protected:
+	GameObject* parentGO = nullptr;
 };

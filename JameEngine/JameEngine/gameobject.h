@@ -15,37 +15,39 @@ public:
     {
         transform.position = {0.f, 0.f, 0.f};
         renderer = nullptr;
-        /*collider = nullptr;
+        // collider = nullptr;
         player = nullptr;
-        colorChanger = nullptr;*/
+        // colorChanger = nullptr;
     }
 
     GameObject(Vector3 pos)
     {
         transform.position = pos;
         renderer = nullptr;
-        /*collider = nullptr;
+        // collider = nullptr;
         player = nullptr;
-        colorChanger = nullptr;*/
+        // colorChanger = nullptr;
     }
 
     ~GameObject() {
         delete renderer;
         renderer = nullptr;
+        delete player;
+        player = nullptr;
     }
 
     Transform transform;
 
     RectangleRenderer* GetRenderer() { return renderer; }
     RectangleRenderer* CreateRenderer(float width, float height, Vector3 color);
-    // RectangleCollider* CreateCollider();
+    RectangleCollider* CreateCollider(float width, float height);
     PlayerController* GetPlayerController() { return player; }
-    PlayerController* CreatePlayerController();
+    PlayerController* CreatePlayerController(float moveSpeed);
     // ColliderColorChanger* CreateColliderColorChanger();
 
 protected:
     RectangleRenderer* renderer;
-    //RectangleCollider* collider;
+    RectangleCollider* collider;
     PlayerController* player;
     // ColliderColorChanger* colorChanger;
 };
