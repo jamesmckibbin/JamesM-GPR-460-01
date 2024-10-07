@@ -20,6 +20,14 @@ RectangleCollider::RectangleCollider(GameObject* obj, float width, float height)
 	colRect.h = height;
 }
 
+bool RectangleCollider::CheckCollision(RectangleCollider* other)
+{
+	SDL_Rect newRect;
+	return (SDL_IntersectRect(&colRect, &other->colRect, &newRect));
+}
+
 void RectangleCollider::Update(float deltaTime)
 {
+	colRect.x = parentGO->transform.position.x - colRect.w / 2;
+	colRect.y = parentGO->transform.position.y + colRect.h / 2;
 }

@@ -65,6 +65,9 @@
     <ClCompile Include="rectanglecollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="collidercolorchanger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JamesEngine.rc">

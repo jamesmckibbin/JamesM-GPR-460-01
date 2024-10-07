@@ -9,7 +9,11 @@ public:
 	RectangleCollider(GameObject* obj);
 	RectangleCollider(GameObject* obj, float width, float height);
 
+	bool CheckCollision(RectangleCollider* other);
+
 	void Update(float deltaTime) override;
+
+	bool isColliding = false;
 private:
 	SDL_Rect colRect;
 };
