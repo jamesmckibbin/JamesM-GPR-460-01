@@ -2,8 +2,17 @@
 #include <vector>
 
 #include "gameobject.h"
+#include "componentpool.h"
 
 //using namespace std;
+
+struct Scene {
+    
+    static ComponentPool<PlayerController> playerControllerPool;
+    static ComponentPool<RectangleRenderer> rectangleRendererPool;
+    static ComponentPool<RectangleCollider> rectangleColliderPool;
+    static ComponentPool<ColliderColorChanger> colliderColorChangerPool;
+};
 
 int main(int argc, char* argv[])
 {
@@ -15,32 +24,31 @@ int main(int argc, char* argv[])
     SDL_Renderer* renderer = NULL;
 
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("Jame Engine v0.0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Jame Engine v0.0.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    std::vector<GameObject*> activeGOs {};
-    std::vector<Component*> activeComponents {};
+    std::vector<GameObject*> gameObjects;
 
-    // for convienence
-    std::vector<RectangleCollider*> activeColliders {};
+    Scene::playerControllerPool = ComponentPool<PlayerController>(15);
+    Scene::rectangleRendererPool = ComponentPool<RectangleRenderer>(15);
+    Scene::rectangleColliderPool = ComponentPool<RectangleCollider>(15);
+    Scene::colliderColorChangerPool = ComponentPool<ColliderColorChanger>(15);
 
     GameObject* background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
-    activeGOs.push_back(background);
-    activeComponents.push_back(background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f }));
+    Scene::rectangleRendererPool.New(RectangleRenderer(background, WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f }));
+    gameObjects.push_back(background);
 
     GameObject* rectangle1 = new GameObject(Vector3{ 100.f, 100.f, 0.f });
-    activeGOs.push_back(rectangle1);
-    activeComponents.push_back(rectangle1->CreateRenderer(100.f, 20.f, Vector3{ 100.f, 0.f, 100.f }));
-    activeComponents.push_back(rectangle1->CreateCollider(100.f, 20.f));
-    activeColliders.push_back(rectangle1->GetCollider());
+    Scene::rectangleRendererPool.New(RectangleRenderer(rectangle1, 100.f, 20.f, Vector3{ 100.f, 0.f, 100.f }));
+    Scene::rectangleColliderPool.New(RectangleCollider(rectangle1, 100.f, 20.f));
+    gameObjects.push_back(rectangle1);
 
     GameObject* player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
-    activeGOs.push_back(player);
-    activeComponents.push_back(player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f }));
-    activeComponents.push_back(player->CreatePlayerController(0.1f));
-    activeComponents.push_back(player->CreateCollider(20.f, 20.f));
-    activeColliders.push_back(player->GetCollider());
-    activeComponents.push_back(player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f }));
+    Scene::rectangleRendererPool.New(RectangleRenderer(player, 20.f, 20.f, Vector3{ 255.f, 0.f, 0.f }));
+    Scene::playerControllerPool.New(PlayerController(player, 0.1f));
+    Scene::rectangleColliderPool.New(RectangleCollider(player, 20.f, 20.f));
+    Scene::colliderColorChangerPool.New(ColliderColorChanger(player, Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f }));
+    gameObjects.push_back(player);
 
     Uint32 lastFrameStartTime, deltaTime = 0;
 
@@ -52,10 +60,29 @@ int main(int argc, char* argv[])
         {
             
         }
+        // DEBUG INPUTS
+        
+        const Uint8* keyboard = SDL_GetKeyboardState(NULL);
+        if (keyboard[SDL_SCANCODE_SPACE]) {
+            // Spawn GO close to player
+        } 
+        else if (keyboard[SDL_SCANCODE_D]) {
+            // Delete closest GO to player
+        }
+        else if (keyboard[SDL_SCANCODE_R]) {
+            // Toggle random creation and deletion state
+        }
+        else if (keyboard[SDL_SCANCODE_F]) {
+            // Fill pool
+        }
+        else if (keyboard[SDL_SCANCODE_C]) {
+            // Clear pool except for player
+        }
+
         // UPDATE
-        for (int i = 0; i < activeColliders.size(); i++) {
-            for (int j = i + 1; j < activeColliders.size(); j++) {
-                if (activeColliders[i]->CheckCollision(activeColliders[j])) {
+        for (int i = 0; i < Scene::rectangleColliderPool.GetPoolSize(); i++) {
+            for (int j = i + 1; j < Scene::rectangleColliderPool.GetPoolSize(); j++) {
+                if (Scene::rectangleColliderPool[i]->CheckCollision(activeColliders[j])) {
                     activeColliders[i]->isColliding = true;
                     activeColliders[j]->isColliding = true;
                 }
@@ -65,25 +92,21 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        for (Component* comp : activeComponents) {
-            comp->Update((float)deltaTime);
-        }
         // DRAW
         SDL_RenderClear(renderer);
-        for (GameObject* go : activeGOs) {
-            go->GetRenderer()->Draw(renderer, go->transform.position);
+        for (RectangleRenderer rect : Scene::rectangleRendererPool.GetPoolSize()) {
+            rect.Draw(renderer, rect.GetOwningGameObject()->transform.position);
         }
         SDL_RenderPresent(renderer);
 
         deltaTime = SDL_GetTicks() - lastFrameStartTime;
     }
 
-    delete background;
-    background = nullptr;
-    delete player;
-    player = nullptr;
-    delete rectangle1;
-    rectangle1 = nullptr;
+    for (GameObject* obj : gameObjects) {
+        delete obj;
+        obj = nullptr;
+    }
+    gameObjects.clear();
 
     SDL_DestroyRenderer(renderer); 
     SDL_DestroyWindow(window);

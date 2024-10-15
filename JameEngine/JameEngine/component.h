@@ -4,10 +4,8 @@ class GameObject;
 
 class Component {
 public:
-	Component() = default;
-
 	virtual void Update(float dt) = 0;
-
+	GameObject* GetOwningGameObject() { return parentGO; }
 protected:
 	GameObject* parentGO = nullptr;
 };

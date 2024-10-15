@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="collidercolorchanger.h" />
     <ClInclude Include="component.h" />
+    <ClInclude Include="componentpool.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gameobject.h" />
     <ClInclude Include="JamesEngine.h" />
@@ -145,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collidercolorchanger.cpp" />
+    <ClCompile Include="componentpool.cpp" />
     <ClCompile Include="gameobject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="playercontroller.cpp" />

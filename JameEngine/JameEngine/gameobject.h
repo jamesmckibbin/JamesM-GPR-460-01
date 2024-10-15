@@ -14,19 +14,11 @@ public:
     GameObject()
     {
         transform.position = {0.f, 0.f, 0.f};
-        renderer = nullptr;
-        collider = nullptr;
-        player = nullptr;
-        colorChanger = nullptr;
     }
 
     GameObject(Vector3 pos)
     {
         transform.position = pos;
-        renderer = nullptr;
-        collider = nullptr;
-        player = nullptr;
-        colorChanger = nullptr;
     }
 
     ~GameObject() {
@@ -52,8 +44,8 @@ public:
     ColliderColorChanger* CreateColliderColorChanger(Vector3 color1, Vector3 color2);
 
 protected:
-    RectangleRenderer* renderer;
-    RectangleCollider* collider;
-    PlayerController* player;
-    ColliderColorChanger* colorChanger;
+    RectangleRenderer* renderer = nullptr;
+    RectangleCollider* collider = nullptr;
+    PlayerController* player = nullptr;
+    ColliderColorChanger* colorChanger = nullptr;
 };
