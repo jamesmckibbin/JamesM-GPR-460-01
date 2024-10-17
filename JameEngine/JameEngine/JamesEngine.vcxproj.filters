@@ -71,9 +71,6 @@
     <ClCompile Include="collidercolorchanger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="componentpool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JamesEngine.rc">

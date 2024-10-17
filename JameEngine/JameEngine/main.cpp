@@ -4,16 +4,6 @@
 #include "gameobject.h"
 #include "componentpool.h"
 
-//using namespace std;
-
-struct Scene {
-    
-    static ComponentPool<PlayerController> playerControllerPool;
-    static ComponentPool<RectangleRenderer> rectangleRendererPool;
-    static ComponentPool<RectangleCollider> rectangleColliderPool;
-    static ComponentPool<ColliderColorChanger> colliderColorChangerPool;
-};
-
 int main(int argc, char* argv[])
 {
     bool loop = true;
@@ -29,25 +19,20 @@ int main(int argc, char* argv[])
 
     std::vector<GameObject*> gameObjects;
 
-    Scene::playerControllerPool = ComponentPool<PlayerController>(15);
-    Scene::rectangleRendererPool = ComponentPool<RectangleRenderer>(15);
-    Scene::rectangleColliderPool = ComponentPool<RectangleCollider>(15);
-    Scene::colliderColorChangerPool = ComponentPool<ColliderColorChanger>(15);
-
     GameObject* background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
-    Scene::rectangleRendererPool.New(RectangleRenderer(background, WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f }));
+    background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f });
     gameObjects.push_back(background);
 
     GameObject* rectangle1 = new GameObject(Vector3{ 100.f, 100.f, 0.f });
-    Scene::rectangleRendererPool.New(RectangleRenderer(rectangle1, 100.f, 20.f, Vector3{ 100.f, 0.f, 100.f }));
-    Scene::rectangleColliderPool.New(RectangleCollider(rectangle1, 100.f, 20.f));
+    rectangle1->CreateRenderer(100.f, 20.f, Vector3{ 100.f, 0.f, 100.f });
+    rectangle1->CreateCollider(100.f, 20.f);
     gameObjects.push_back(rectangle1);
 
     GameObject* player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
-    Scene::rectangleRendererPool.New(RectangleRenderer(player, 20.f, 20.f, Vector3{ 255.f, 0.f, 0.f }));
-    Scene::playerControllerPool.New(PlayerController(player, 0.1f));
-    Scene::rectangleColliderPool.New(RectangleCollider(player, 20.f, 20.f));
-    Scene::colliderColorChangerPool.New(ColliderColorChanger(player, Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f }));
+    player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f });
+    player->CreatePlayerController(0.1f);
+    player->CreateCollider(20.f, 20.f);
+    player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
     gameObjects.push_back(player);
 
     Uint32 lastFrameStartTime, deltaTime = 0;
@@ -79,23 +64,23 @@ int main(int argc, char* argv[])
             // Clear pool except for player
         }
 
-        // UPDATE
-        for (int i = 0; i < Scene::rectangleColliderPool.GetPoolSize(); i++) {
-            for (int j = i + 1; j < Scene::rectangleColliderPool.GetPoolSize(); j++) {
-                if (Scene::rectangleColliderPool[i]->CheckCollision(activeColliders[j])) {
-                    activeColliders[i]->isColliding = true;
-                    activeColliders[j]->isColliding = true;
-                }
-                else {
-                    activeColliders[i]->isColliding = false;
-                    activeColliders[j]->isColliding = false;
-                }
-            }
-        }
+        //// UPDATE
+        //for (int i = 0; i < gRectangleColliderPool.GetPool().size(); i++) {
+        //    for (int j = i + 1; j < gRectangleColliderPool.GetPool().size(); j++) {
+        //        if (gRectangleColliderPool.GetPool()[i]->CheckCollision(gRectangleColliderPool.GetPool()[j])) {
+        //            gRectangleColliderPool.GetPool()[i]->isColliding = true;
+        //            gRectangleColliderPool.GetPool()[j]->isColliding = true;
+        //        }
+        //        else {
+        //            gRectangleColliderPool.GetPool()[i]->isColliding = false;
+        //            gRectangleColliderPool.GetPool()[j]->isColliding = false;
+        //        }
+        //    }
+        //}
         // DRAW
         SDL_RenderClear(renderer);
-        for (RectangleRenderer rect : Scene::rectangleRendererPool.GetPoolSize()) {
-            rect.Draw(renderer, rect.GetOwningGameObject()->transform.position);
+        for (GameObject* obj : gameObjects) {
+            obj->Draw(renderer);
         }
         SDL_RenderPresent(renderer);
 
