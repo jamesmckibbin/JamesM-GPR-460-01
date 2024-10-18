@@ -82,6 +82,18 @@ int main(int argc, char* argv[])
         // DELETE NEAREST GAME OBJECT
         else if (keyboard[SDL_SCANCODE_D]) {
             if (!debugKeyDown) {
+                GameObject* closestGO = nullptr;
+                for (GameObject* obj : gameObjects) {
+                    if (obj != player && obj != background) {
+                        closestGO = obj;
+                    }
+                }
+                if (closestGO != nullptr) {
+                    gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), closestGO));
+                    delete closestGO;
+                    closestGO = nullptr;
+                }
+
                 printf("D pressed");
                 debugKeyDown = true;
             }
@@ -104,6 +116,13 @@ int main(int argc, char* argv[])
         // EMPTY EACH POOL (EXCEPT FOR PLAYER)
         else if (keyboard[SDL_SCANCODE_C]) {
             if (!debugKeyDown) {
+                for (GameObject* obj : gameObjects) {
+                    if (obj != player && obj != background) {
+                        gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), obj));
+                        delete obj;
+                        obj = nullptr;
+                    }
+                }
                 printf("C pressed");
                 debugKeyDown = true;
             }
