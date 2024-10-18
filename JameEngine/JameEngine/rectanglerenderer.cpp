@@ -1,7 +1,13 @@
 #include "rectanglerenderer.h"
 
+RectangleRenderer::RectangleRenderer()
+{
+	parentGO = nullptr;
+}
+
 RectangleRenderer::RectangleRenderer(GameObject* obj)
 {
+	parentGO = obj;
 	width = 10.f;
 	height = 10.f;
 	color = { 255.f, 255.f, 255.f };
@@ -9,6 +15,7 @@ RectangleRenderer::RectangleRenderer(GameObject* obj)
 
 RectangleRenderer::RectangleRenderer(GameObject* obj, float newwidth, float newheight, Vector3 newcolor)
 {
+	parentGO = obj;
 	width = newwidth;
 	height = newheight;
 	color = newcolor;

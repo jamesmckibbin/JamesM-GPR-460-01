@@ -2,6 +2,11 @@
 
 #include "gameobject.h"
 
+RectangleCollider::RectangleCollider()
+{
+	parentGO = nullptr;
+}
+
 RectangleCollider::RectangleCollider(GameObject* obj)
 {
 	parentGO = obj;
@@ -14,10 +19,10 @@ RectangleCollider::RectangleCollider(GameObject* obj)
 RectangleCollider::RectangleCollider(GameObject* obj, float width, float height)
 {
 	parentGO = obj;
-	colRect.x = obj->transform.position.x + width / 2;
-	colRect.y = obj->transform.position.y + height / 2;
-	colRect.w = width;
-	colRect.h = height;
+	colRect.x = (int)obj->transform.position.x + (int)width / 2;
+	colRect.y = (int)obj->transform.position.y + (int)height / 2;
+	colRect.w = (int)width;
+	colRect.h = (int)height;
 }
 
 bool RectangleCollider::CheckCollision(RectangleCollider* other)
@@ -28,6 +33,6 @@ bool RectangleCollider::CheckCollision(RectangleCollider* other)
 
 void RectangleCollider::Update(float deltaTime)
 {
-	colRect.x = parentGO->transform.position.x - colRect.w / 2;
-	colRect.y = parentGO->transform.position.y + colRect.h / 2;
+	colRect.x = (int)parentGO->transform.position.x - colRect.w / 2;
+	colRect.y = (int)parentGO->transform.position.y + colRect.h / 2;
 }

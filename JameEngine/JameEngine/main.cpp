@@ -1,12 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <vector>
 
 #include "gameobject.h"
-#include "componentpool.h"
 
 int main(int argc, char* argv[])
 {
     bool loop = true;
+    bool chaosMode = false;
+    bool debugKeyDown = false;
 
     const int WIDTH = 640;
     const int HEIGHT = 480;
@@ -46,41 +49,110 @@ int main(int argc, char* argv[])
             
         }
         // DEBUG INPUTS
-        
         const Uint8* keyboard = SDL_GetKeyboardState(NULL);
+        // NEW GAME OBJECT
         if (keyboard[SDL_SCANCODE_SPACE]) {
-            // Spawn GO close to player
-        } 
+            if (!debugKeyDown) {
+                // Set up random values
+                srand(time(NULL));
+                Vector3 randomLocation = { player->transform.position.x + rand() % 100 - 50, player->transform.position.y + rand() % 100 - 50, 0.f };
+                Vector3 randomColor = { rand() % 255, rand() % 255, rand() % 255 };
+                Vector3 randomAltColor = { rand() % 255, rand() % 255, rand() % 255 };
+                int randomComponent = rand() & 3 + 1;
+
+                // Instantiate GO
+                GameObject* newGO = new GameObject(randomLocation);
+
+                // If possible, create renderer and collider component
+                if (Scene::sRectangleRendererPool.CanCreateComponent() && 
+                    Scene::sRectangleColliderPool.CanCreateComponent()) {
+                    newGO->CreateRenderer(10.f, 10.f, randomColor);
+                    newGO->CreateCollider(10.f, 10.f);
+                    gameObjects.push_back(newGO);
+                    printf("Object created");
+                }
+                else {
+                    delete newGO;
+                    newGO = nullptr;
+                }
+                
+                debugKeyDown = true;
+            }
+        }
+        // DELETE NEAREST GAME OBJECT
         else if (keyboard[SDL_SCANCODE_D]) {
-            // Delete closest GO to player
+            if (!debugKeyDown) {
+                printf("D pressed");
+                debugKeyDown = true;
+            }
         }
+        // TOGGLE CHAOS MODE
         else if (keyboard[SDL_SCANCODE_R]) {
-            // Toggle random creation and deletion state
+            if (!debugKeyDown) {
+                printf("R pressed");
+                chaosMode = !chaosMode;
+                debugKeyDown = true;
+            }
         }
+        // FILL EACH POOL
         else if (keyboard[SDL_SCANCODE_F]) {
-            // Fill pool
+            if (!debugKeyDown) {
+                printf("F pressed");
+                debugKeyDown = true;
+            }
         }
+        // EMPTY EACH POOL (EXCEPT FOR PLAYER)
         else if (keyboard[SDL_SCANCODE_C]) {
-            // Clear pool except for player
+            if (!debugKeyDown) {
+                printf("C pressed");
+                debugKeyDown = true;
+            }
+        }
+        else if (debugKeyDown) {
+            debugKeyDown = false;
+        }
+        
+
+        // COLLISIONS
+        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
+            for (int j = i + 1; j < Scene::sRectangleColliderPool.GetSize(); j++) {
+                if (Scene::sRectangleColliderPool.GetPoolArrayItemInUse(i) &&
+                    Scene::sRectangleColliderPool.GetPoolArrayItemInUse(j)) {
+                    if (Scene::sRectangleColliderPool.GetPoolArrayItem(i)->CheckCollision(Scene::sRectangleColliderPool.GetPoolArrayItem(j))) {
+                        Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = true;
+                        Scene::sRectangleColliderPool.GetPoolArrayItem(j)->isColliding = true;
+                    }
+                    else {
+                        Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = false;
+                        Scene::sRectangleColliderPool.GetPoolArrayItem(j)->isColliding = false;
+                    }
+                }
+            }
         }
 
-        //// UPDATE
-        //for (int i = 0; i < gRectangleColliderPool.GetPool().size(); i++) {
-        //    for (int j = i + 1; j < gRectangleColliderPool.GetPool().size(); j++) {
-        //        if (gRectangleColliderPool.GetPool()[i]->CheckCollision(gRectangleColliderPool.GetPool()[j])) {
-        //            gRectangleColliderPool.GetPool()[i]->isColliding = true;
-        //            gRectangleColliderPool.GetPool()[j]->isColliding = true;
-        //        }
-        //        else {
-        //            gRectangleColliderPool.GetPool()[i]->isColliding = false;
-        //            gRectangleColliderPool.GetPool()[j]->isColliding = false;
-        //        }
-        //    }
-        //}
+        // UPDATE
+        for (int i = 0; i < Scene::sPlayerControllerPool.GetSize(); i++) {
+            if (Scene::sPlayerControllerPool.GetPoolArrayItemInUse(i)) {
+                Scene::sPlayerControllerPool.GetPoolArrayItem(i)->Update(deltaTime);
+            }
+        }
+        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
+            if (Scene::sRectangleColliderPool.GetPoolArrayItemInUse(i)) {
+                Scene::sRectangleColliderPool.GetPoolArrayItem(i)->Update(deltaTime);
+            }
+        }
+        for (int i = 0; i < Scene::sColliderColorChangerPool.GetSize(); i++) {
+            if (Scene::sColliderColorChangerPool.GetPoolArrayItemInUse(i)) {
+                Scene::sColliderColorChangerPool.GetPoolArrayItem(i)->Update(deltaTime);
+            }
+        }
+
         // DRAW
         SDL_RenderClear(renderer);
-        for (GameObject* obj : gameObjects) {
-            obj->Draw(renderer);
+        for (int i = 0; i < Scene::sRectangleRendererPool.GetSize(); i++) {
+            if (Scene::sRectangleRendererPool.GetPoolArrayItemInUse(i)) {
+                Scene::sRectangleRendererPool.GetPoolArrayItem(i)->Draw(renderer, Scene::sRectangleRendererPool.GetPoolArrayItem(i)->GetOwningGameObject()->transform.position);
+            }
         }
         SDL_RenderPresent(renderer);
 

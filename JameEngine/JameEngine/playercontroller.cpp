@@ -2,6 +2,11 @@
 #include <SDL.h>
 #include "gameobject.h"
 
+PlayerController::PlayerController()
+{
+    parentGO = nullptr;
+}
+
 PlayerController::PlayerController(GameObject* obj, float moveSpeed)
 {
     parentGO = obj;

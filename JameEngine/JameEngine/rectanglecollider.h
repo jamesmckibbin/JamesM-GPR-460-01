@@ -6,6 +6,7 @@
 
 class RectangleCollider : public Component {
 public:
+	RectangleCollider();
 	RectangleCollider(GameObject* obj);
 	RectangleCollider(GameObject* obj, float width, float height);
 

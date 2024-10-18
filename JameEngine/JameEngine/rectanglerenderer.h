@@ -8,6 +8,7 @@
 class RectangleRenderer : public Component
 {
 public:
+	RectangleRenderer();
 	RectangleRenderer(GameObject* obj);
 	RectangleRenderer(GameObject* obj, float newwidth, float newheight, Vector3 newcolor);
 	void Update(float dt) override;

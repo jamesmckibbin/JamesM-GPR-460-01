@@ -141,6 +141,7 @@
     <ClInclude Include="rectanglecollider.h" />
     <ClInclude Include="rectanglerenderer.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="transform.h" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClCompile Include="playercontroller.cpp" />
     <ClCompile Include="rectanglecollider.cpp" />
     <ClCompile Include="rectanglerenderer.cpp" />
+    <ClCompile Include="scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JamesEngine.rc" />

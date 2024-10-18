@@ -1,6 +1,11 @@
 #include "collidercolorchanger.h"
 #include "gameobject.h"
 
+ColliderColorChanger::ColliderColorChanger()
+{
+	parentGO = nullptr;
+}
+
 ColliderColorChanger::ColliderColorChanger(GameObject* obj)
 {
 	parentGO = obj;

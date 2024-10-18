@@ -2,11 +2,7 @@
 
 #include <vector>
 
-#include "componentpool.h"
-#include "rectanglerenderer.h"
-#include "rectanglecollider.h"
-#include "playercontroller.h"
-#include "collidercolorchanger.h"
+#include "scene.h"
 
 class GameObject
 {
@@ -23,10 +19,18 @@ public:
     }
 
     ~GameObject() {
-        GameObject::sRectangleRendererPool.Delete(renderer);
-        GameObject::sRectangleColliderPool.Delete(collider);
-        GameObject::sPlayerControllerPool.Delete(player);
-        GameObject::sColliderColorChangerPool.Delete(colorChanger);
+        if (renderer != nullptr) {
+            Scene::sRectangleRendererPool.Delete(renderer);
+        }
+        if (collider != nullptr) {
+            Scene::sRectangleColliderPool.Delete(collider);
+        }
+        if (player != nullptr) {
+            Scene::sPlayerControllerPool.Delete(player);
+        }
+        if (colorChanger != nullptr) {
+            Scene::sColliderColorChangerPool.Delete(colorChanger);
+        }
     }
 
     Transform transform;
@@ -41,11 +45,6 @@ public:
     ColliderColorChanger* CreateColliderColorChanger(Vector3 color1, Vector3 color2);
 
     void Draw(SDL_Renderer* renderTarget);
-
-    static ComponentPool<PlayerController> sPlayerControllerPool;
-    static ComponentPool<RectangleRenderer> sRectangleRendererPool;
-    static ComponentPool<RectangleCollider> sRectangleColliderPool;
-    static ComponentPool<ColliderColorChanger> sColliderColorChangerPool;
 
 protected:
     RectangleRenderer* renderer = nullptr;
