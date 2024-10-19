@@ -23,10 +23,3 @@ ColliderColorChanger* GameObject::CreateColliderColorChanger(Vector3 color1, Vec
     colorChanger = Scene::sColliderColorChangerPool.New(this, color1, color2);
     return colorChanger;
 }
-
-void GameObject::Draw(SDL_Renderer* renderTarget)
-{
-    if (renderer != nullptr) {
-        renderer->Draw(renderTarget, transform.position);
-    }
-}

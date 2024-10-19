@@ -44,8 +44,6 @@ public:
     ColliderColorChanger* GetColliderColorChanger() { return colorChanger; }
     ColliderColorChanger* CreateColliderColorChanger(Vector3 color1, Vector3 color2);
 
-    void Draw(SDL_Renderer* renderTarget);
-
 protected:
     RectangleRenderer* renderer = nullptr;
     RectangleCollider* collider = nullptr;
