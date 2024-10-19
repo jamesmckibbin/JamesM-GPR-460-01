@@ -5,6 +5,13 @@
 
 #include "gameobject.h"
 
+void AddRandomGameObject();
+void DeleteClosestGameObject();
+
+std::vector<GameObject*> gameObjects;
+GameObject* background;
+GameObject* player;
+
 int main(int argc, char* argv[])
 {
     bool loop = true;
@@ -20,23 +27,23 @@ int main(int argc, char* argv[])
     window = SDL_CreateWindow("Jame Engine v0.0.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    std::vector<GameObject*> gameObjects;
+    srand(time(NULL));
 
-    GameObject* background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
+    background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f });
     gameObjects.push_back(background);
 
-    GameObject* rectangle1 = new GameObject(Vector3{ 100.f, 100.f, 0.f });
-    rectangle1->CreateRenderer(100.f, 20.f, Vector3{ 100.f, 0.f, 100.f });
-    rectangle1->CreateCollider(100.f, 20.f);
-    gameObjects.push_back(rectangle1);
-
-    GameObject* player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
+    player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f });
     player->CreatePlayerController(0.1f);
     player->CreateCollider(20.f, 20.f);
     player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
     gameObjects.push_back(player);
+
+    GameObject* rectangle1 = new GameObject(Vector3{ 100.f, 100.f, 0.f });
+    rectangle1->CreateRenderer(100.f, 20.f, Vector3{ 100.f, 0.f, 100.f });
+    rectangle1->CreateCollider(100.f, 20.f);
+    gameObjects.push_back(rectangle1);
 
     Uint32 lastFrameStartTime, deltaTime = 0;
 
@@ -53,48 +60,14 @@ int main(int argc, char* argv[])
         // NEW GAME OBJECT
         if (keyboard[SDL_SCANCODE_SPACE]) {
             if (!debugKeyDown) {
-                // Set up random values
-                srand(time(NULL));
-                Vector3 randomLocation = { player->transform.position.x + rand() % 100 - 50, player->transform.position.y + rand() % 100 - 50, 0.f };
-                Vector3 randomColor = { rand() % 255, rand() % 255, rand() % 255 };
-                Vector3 randomAltColor = { rand() % 255, rand() % 255, rand() % 255 };
-                int randomComponent = rand() & 3 + 1;
-
-                // Instantiate GO
-                GameObject* newGO = new GameObject(randomLocation);
-
-                // If possible, create renderer and collider component
-                if (Scene::sRectangleRendererPool.CanCreateComponent() && 
-                    Scene::sRectangleColliderPool.CanCreateComponent()) {
-                    newGO->CreateRenderer(10.f, 10.f, randomColor);
-                    newGO->CreateCollider(10.f, 10.f);
-                    gameObjects.push_back(newGO);
-                    printf("Object created");
-                }
-                else {
-                    delete newGO;
-                    newGO = nullptr;
-                }
-                
+                AddRandomGameObject();
                 debugKeyDown = true;
             }
         }
         // DELETE NEAREST GAME OBJECT
         else if (keyboard[SDL_SCANCODE_D]) {
             if (!debugKeyDown) {
-                GameObject* closestGO = nullptr;
-                for (GameObject* obj : gameObjects) {
-                    if (obj != player && obj != background) {
-                        closestGO = obj;
-                    }
-                }
-                if (closestGO != nullptr) {
-                    gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), closestGO));
-                    delete closestGO;
-                    closestGO = nullptr;
-                }
-
-                printf("D pressed");
+                DeleteClosestGameObject();
                 debugKeyDown = true;
             }
         }
@@ -117,16 +90,12 @@ int main(int argc, char* argv[])
         else if (keyboard[SDL_SCANCODE_C]) {
             if (!debugKeyDown) {
                 for (GameObject* obj : gameObjects) {
-                    if (obj != player && obj != background) {
-                        gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), obj));
-                        delete obj;
-                        obj = nullptr;
-                    }
+                    DeleteClosestGameObject();
                 }
-                printf("C pressed");
                 debugKeyDown = true;
             }
         }
+        // RESET ON NO BUTTONS PRESSED
         else if (debugKeyDown) {
             debugKeyDown = false;
         }
@@ -166,6 +135,20 @@ int main(int argc, char* argv[])
             }
         }
 
+        // CHAOS MODE
+        if (chaosMode) {
+            switch (rand() % 2 + 1) {
+            case 1:
+                AddRandomGameObject();
+                break;
+            case 2:
+                DeleteClosestGameObject();
+                break;
+            default:
+                break;
+            }
+        }
+
         // DRAW
         SDL_RenderClear(renderer);
         for (int i = 0; i < Scene::sRectangleRendererPool.GetSize(); i++) {
@@ -188,4 +171,48 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
+}
+
+void AddRandomGameObject() {
+    // Set up random values
+    Vector3 randomLocation = { player->transform.position.x + rand() % 100 - 50, player->transform.position.y + rand() % 100 - 50, 0.f };
+    Vector3 randomColor = { rand() % 255, rand() % 255, rand() % 255 };
+    Vector3 randomAltColor = { rand() % 255, rand() % 255, rand() % 255 };
+    int randomComponent = rand() & 3 + 1;
+
+    // Instantiate GO
+    GameObject* newGO = new GameObject(randomLocation);
+
+    // If possible, create renderer and collider component
+    if (Scene::sRectangleRendererPool.CanCreateComponent() &&
+        Scene::sRectangleColliderPool.CanCreateComponent()) {
+        newGO->CreateRenderer(10.f, 10.f, randomColor);
+        newGO->CreateCollider(10.f, 10.f);
+        gameObjects.push_back(newGO);
+        printf("Object created");
+    }
+    else {
+        delete newGO;
+        newGO = nullptr;
+    }
+}
+void DeleteClosestGameObject() {
+    GameObject* closestGO = nullptr;
+    for (GameObject* obj : gameObjects) {
+        if (obj != player && obj != background) {
+            // Get closest
+            if (closestGO == nullptr) {
+                closestGO = obj;
+            }
+            else if (abs(obj->transform.position.x - player->transform.position.x) + abs(obj->transform.position.y - player->transform.position.y) <
+                     abs(closestGO->transform.position.x - player->transform.position.x) + abs(closestGO->transform.position.y - player->transform.position.y)) {
+                closestGO = obj;
+            }
+        }
+    }
+    if (closestGO != nullptr) {
+        gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), closestGO));
+        delete closestGO;
+        closestGO = nullptr;
+    }
 }
