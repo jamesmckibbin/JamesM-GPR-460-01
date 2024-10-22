@@ -4,7 +4,10 @@
 #include <vector>
 
 #include "gameobject.h"
+#include "stackallocator.h"
+#include <string>
 
+void DoDebugInput();
 void AddRandomGameObject();
 void DeleteClosestGameObject();
 
@@ -12,11 +15,12 @@ std::vector<GameObject*> gameObjects;
 GameObject* background;
 GameObject* player;
 
+bool debugKeyDown = false;
+bool chaosMode = false;
+
 int main(int argc, char* argv[])
 {
     bool loop = true;
-    bool chaosMode = false;
-    bool debugKeyDown = false;
 
     const int WIDTH = 640;
     const int HEIGHT = 480;
@@ -28,6 +32,8 @@ int main(int argc, char* argv[])
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     srand(time(NULL));
+
+    StackAllocator frameAllocator(32);
 
     background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f });
@@ -45,61 +51,20 @@ int main(int argc, char* argv[])
     rectangle1->CreateCollider(100.f, 20.f);
     gameObjects.push_back(rectangle1);
 
-    Uint32 lastFrameStartTime, deltaTime = 0;
+    Uint32 lastFrameStartTime, deltaTime = 1;
 
     while (loop) {
         lastFrameStartTime = SDL_GetTicks();
+
+        char* frameCounter = frameAllocator.Alloc<char>();
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
             
         }
-        // DEBUG INPUTS
-        const Uint8* keyboard = SDL_GetKeyboardState(NULL);
-        // NEW GAME OBJECT
-        if (keyboard[SDL_SCANCODE_SPACE]) {
-            if (!debugKeyDown) {
-                AddRandomGameObject();
-                debugKeyDown = true;
-            }
-        }
-        // DELETE NEAREST GAME OBJECT
-        else if (keyboard[SDL_SCANCODE_D]) {
-            if (!debugKeyDown) {
-                DeleteClosestGameObject();
-                debugKeyDown = true;
-            }
-        }
-        // TOGGLE CHAOS MODE
-        else if (keyboard[SDL_SCANCODE_R]) {
-            if (!debugKeyDown) {
-                printf("R pressed");
-                chaosMode = !chaosMode;
-                debugKeyDown = true;
-            }
-        }
-        // FILL EACH POOL
-        else if (keyboard[SDL_SCANCODE_F]) {
-            if (!debugKeyDown) {
-                printf("F pressed");
-                debugKeyDown = true;
-            }
-        }
-        // EMPTY EACH POOL (EXCEPT FOR PLAYER)
-        else if (keyboard[SDL_SCANCODE_C]) {
-            if (!debugKeyDown) {
-                for (GameObject* obj : gameObjects) {
-                    DeleteClosestGameObject();
-                }
-                debugKeyDown = true;
-            }
-        }
-        // RESET ON NO BUTTONS PRESSED
-        else if (debugKeyDown) {
-            debugKeyDown = false;
-        }
-        
+
+        DoDebugInput();
 
         // COLLISIONS
         for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
@@ -159,6 +124,11 @@ int main(int argc, char* argv[])
         SDL_RenderPresent(renderer);
 
         deltaTime = SDL_GetTicks() - lastFrameStartTime;
+
+        snprintf(frameCounter, frameAllocator.BytesFree(), "FPS: %d", 1000 / deltaTime);
+        puts(frameCounter);
+
+        frameAllocator.Reset();
     }
 
     for (GameObject* obj : gameObjects) {
@@ -171,6 +141,59 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
+}
+
+void DoDebugInput() {
+    const Uint8* keyboard = SDL_GetKeyboardState(NULL);
+    // NEW GAME OBJECT
+    if (keyboard[SDL_SCANCODE_SPACE]) {
+        if (!debugKeyDown) {
+            AddRandomGameObject();
+            debugKeyDown = true;
+        }
+    }
+    // DELETE NEAREST GAME OBJECT
+    else if (keyboard[SDL_SCANCODE_D]) {
+        if (!debugKeyDown) {
+            DeleteClosestGameObject();
+            debugKeyDown = true;
+        }
+    }
+    // TOGGLE CHAOS MODE
+    else if (keyboard[SDL_SCANCODE_R]) {
+        if (!debugKeyDown) {
+            printf("R pressed");
+            chaosMode = !chaosMode;
+            debugKeyDown = true;
+        }
+    }
+    // FILL EACH POOL
+    else if (keyboard[SDL_SCANCODE_F]) {
+        if (!debugKeyDown) {
+            printf("F pressed");
+            debugKeyDown = true;
+        }
+    }
+    // EMPTY EACH POOL (EXCEPT FOR PLAYER)
+    else if (keyboard[SDL_SCANCODE_C]) {
+        if (!debugKeyDown) {
+            for (GameObject* obj : gameObjects) {
+                DeleteClosestGameObject();
+            }
+            debugKeyDown = true;
+        }
+    }
+    // PRINT FPS
+    else if (keyboard[SDL_SCANCODE_T]) {
+        if (!debugKeyDown) {
+
+        }
+        debugKeyDown = true;
+    }
+    // RESET ON NO BUTTONS PRESSED
+    else if (debugKeyDown) {
+        debugKeyDown = false;
+    }
 }
 
 void AddRandomGameObject() {
