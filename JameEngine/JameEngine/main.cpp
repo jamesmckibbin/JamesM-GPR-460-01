@@ -16,6 +16,7 @@ GameObject* background;
 GameObject* player;
 
 bool debugKeyDown = false;
+bool printFPS = false;
 bool chaosMode = false;
 
 int main(int argc, char* argv[])
@@ -46,11 +47,6 @@ int main(int argc, char* argv[])
     player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
     gameObjects.push_back(player);
 
-    GameObject* rectangle1 = new GameObject(Vector3{ 100.f, 100.f, 0.f });
-    rectangle1->CreateRenderer(100.f, 20.f, Vector3{ 100.f, 0.f, 100.f });
-    rectangle1->CreateCollider(100.f, 20.f);
-    gameObjects.push_back(rectangle1);
-
     Uint32 lastFrameStartTime, deltaTime = 1;
 
     while (loop) {
@@ -58,6 +54,7 @@ int main(int argc, char* argv[])
 
         char* frameCounter = frameAllocator.Alloc<char>();
 
+        // SDL EVENTS
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -125,8 +122,17 @@ int main(int argc, char* argv[])
 
         deltaTime = SDL_GetTicks() - lastFrameStartTime;
 
-        snprintf(frameCounter, frameAllocator.BytesFree(), "FPS: %d", 1000 / deltaTime);
-        puts(frameCounter);
+        // FPS COUNTER
+        if (printFPS) {
+            if (frameCounter != nullptr) {
+                snprintf(frameCounter, frameAllocator.BytesFree(), "FPS: %d", 1000 / deltaTime);
+                puts(frameCounter);
+            }
+            else {
+                puts("Could not print frame counter, no memory allocated");
+            }
+            printFPS = false;
+        }
 
         frameAllocator.Reset();
     }
@@ -162,7 +168,6 @@ void DoDebugInput() {
     // TOGGLE CHAOS MODE
     else if (keyboard[SDL_SCANCODE_R]) {
         if (!debugKeyDown) {
-            printf("R pressed");
             chaosMode = !chaosMode;
             debugKeyDown = true;
         }
@@ -170,7 +175,7 @@ void DoDebugInput() {
     // FILL EACH POOL
     else if (keyboard[SDL_SCANCODE_F]) {
         if (!debugKeyDown) {
-            printf("F pressed");
+            // (should fill the pool here :) )
             debugKeyDown = true;
         }
     }
@@ -186,7 +191,7 @@ void DoDebugInput() {
     // PRINT FPS
     else if (keyboard[SDL_SCANCODE_T]) {
         if (!debugKeyDown) {
-
+            printFPS = true;
         }
         debugKeyDown = true;
     }
