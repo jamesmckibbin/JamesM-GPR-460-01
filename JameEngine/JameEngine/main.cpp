@@ -8,8 +8,10 @@
 #include <string>
 
 void DoDebugInput();
-void AddRandomGameObject();
+GameObject* AddRandomGameObject();
 void DeleteClosestGameObject();
+
+StackAllocator frameAllocator(32);
 
 GameObject* background;
 GameObject* player;
@@ -28,12 +30,10 @@ int main(int argc, char* argv[])
     SDL_Renderer* renderer = NULL;
 
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("Jame Engine v0.0.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Jame Engine v0.0.3", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     srand(time(NULL));
-
-    StackAllocator frameAllocator(32);
 
     background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f });
@@ -49,10 +49,15 @@ int main(int argc, char* argv[])
     Uint32 lastFrameStartTime, deltaTime = 1;
 
     while (loop) {
+        // FRAME TIME START
         lastFrameStartTime = SDL_GetTicks();
 
-        // FRAME ALLOCATOR
+        // FRAME ALLOCATION START
         char* frameCounter = frameAllocator.Alloc<char>();
+        RectangleCollider* colliders = frameAllocator.AllocArray<RectangleCollider>(Scene::sRectangleColliderPool.GetSize());
+        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
+            colliders[i] = *Scene::sRectangleColliderPool.GetPoolArrayItem(i);
+        }
 
         // SDL EVENTS
         SDL_Event event;
@@ -104,8 +109,6 @@ int main(int argc, char* argv[])
         }
         SDL_RenderPresent(renderer);
 
-        deltaTime = SDL_GetTicks() - lastFrameStartTime;
-
         // FPS COUNTER
         if (printFPS) {
             if (frameCounter != nullptr) {
@@ -118,15 +121,21 @@ int main(int argc, char* argv[])
             printFPS = false;
         }
 
+        // FRAME ALLOCATION RESET
         frameAllocator.Reset();
+
+        // FRAME TIME END
+        deltaTime = SDL_GetTicks() - lastFrameStartTime;
     }
 
+    // CLEAN UP GAME OBJECTS
     for (GameObject* obj : Scene::sGameObjects) {
         delete obj;
         obj = nullptr;
     }
     Scene::sGameObjects.clear();
 
+    // EXIT APPLICATION
     SDL_DestroyRenderer(renderer); 
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -185,7 +194,7 @@ void DoDebugInput() {
     }
 }
 
-void AddRandomGameObject() {
+GameObject* AddRandomGameObject() {
     // Set up random values
     Vector3 randomLocation = { player->transform.position.x + rand() % 100 - 50, player->transform.position.y + rand() % 100 - 50, 0.f };
     Vector3 randomColor = { rand() % 255, rand() % 255, rand() % 255 };
@@ -201,11 +210,12 @@ void AddRandomGameObject() {
         newGO->CreateRenderer(10.f, 10.f, randomColor);
         newGO->CreateCollider(10.f, 10.f);
         Scene::sGameObjects.push_back(newGO);
-        printf("Object created");
+        return newGO;
     }
     else {
         delete newGO;
         newGO = nullptr;
+        return nullptr;
     }
 }
 void DeleteClosestGameObject() {
