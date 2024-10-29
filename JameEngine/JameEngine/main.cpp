@@ -11,7 +11,6 @@ void DoDebugInput();
 void AddRandomGameObject();
 void DeleteClosestGameObject();
 
-std::vector<GameObject*> gameObjects;
 GameObject* background;
 GameObject* player;
 
@@ -38,20 +37,21 @@ int main(int argc, char* argv[])
 
     background = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     background->CreateRenderer(WIDTH, HEIGHT, Vector3{ 255.f, 255.f, 255.f });
-    gameObjects.push_back(background);
+    Scene::sGameObjects.push_back(background);
 
     player = new GameObject(Vector3{ WIDTH / 2, HEIGHT / 2, 0.f });
     player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f });
     player->CreatePlayerController(0.1f);
     player->CreateCollider(20.f, 20.f);
     player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
-    gameObjects.push_back(player);
+    Scene::sGameObjects.push_back(player);
 
     Uint32 lastFrameStartTime, deltaTime = 1;
 
     while (loop) {
         lastFrameStartTime = SDL_GetTicks();
 
+        // FRAME ALLOCATOR
         char* frameCounter = frameAllocator.Alloc<char>();
 
         // SDL EVENTS
@@ -61,24 +61,8 @@ int main(int argc, char* argv[])
             
         }
 
+        // DEBUG INPUT
         DoDebugInput();
-
-        // COLLISIONS
-        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
-            for (int j = i + 1; j < Scene::sRectangleColliderPool.GetSize(); j++) {
-                if (Scene::sRectangleColliderPool.GetPoolArrayItemInUse(i) &&
-                    Scene::sRectangleColliderPool.GetPoolArrayItemInUse(j)) {
-                    if (Scene::sRectangleColliderPool.GetPoolArrayItem(i)->CheckCollision(Scene::sRectangleColliderPool.GetPoolArrayItem(j))) {
-                        Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = true;
-                        Scene::sRectangleColliderPool.GetPoolArrayItem(j)->isColliding = true;
-                    }
-                    else {
-                        Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = false;
-                        Scene::sRectangleColliderPool.GetPoolArrayItem(j)->isColliding = false;
-                    }
-                }
-            }
-        }
 
         // UPDATE
         for (int i = 0; i < Scene::sPlayerControllerPool.GetSize(); i++) {
@@ -129,7 +113,7 @@ int main(int argc, char* argv[])
                 puts(frameCounter);
             }
             else {
-                puts("Could not print frame counter, no memory allocated");
+                puts("Could not print frame counter, not enough memory");
             }
             printFPS = false;
         }
@@ -137,11 +121,11 @@ int main(int argc, char* argv[])
         frameAllocator.Reset();
     }
 
-    for (GameObject* obj : gameObjects) {
+    for (GameObject* obj : Scene::sGameObjects) {
         delete obj;
         obj = nullptr;
     }
-    gameObjects.clear();
+    Scene::sGameObjects.clear();
 
     SDL_DestroyRenderer(renderer); 
     SDL_DestroyWindow(window);
@@ -182,7 +166,7 @@ void DoDebugInput() {
     // EMPTY EACH POOL (EXCEPT FOR PLAYER)
     else if (keyboard[SDL_SCANCODE_C]) {
         if (!debugKeyDown) {
-            for (GameObject* obj : gameObjects) {
+            for (GameObject* obj : Scene::sGameObjects) {
                 DeleteClosestGameObject();
             }
             debugKeyDown = true;
@@ -216,7 +200,7 @@ void AddRandomGameObject() {
         Scene::sRectangleColliderPool.CanCreateComponent()) {
         newGO->CreateRenderer(10.f, 10.f, randomColor);
         newGO->CreateCollider(10.f, 10.f);
-        gameObjects.push_back(newGO);
+        Scene::sGameObjects.push_back(newGO);
         printf("Object created");
     }
     else {
@@ -226,7 +210,7 @@ void AddRandomGameObject() {
 }
 void DeleteClosestGameObject() {
     GameObject* closestGO = nullptr;
-    for (GameObject* obj : gameObjects) {
+    for (GameObject* obj : Scene::sGameObjects) {
         if (obj != player && obj != background) {
             // Get closest
             if (closestGO == nullptr) {
@@ -239,7 +223,7 @@ void DeleteClosestGameObject() {
         }
     }
     if (closestGO != nullptr) {
-        gameObjects.erase(std::remove(gameObjects.begin(), gameObjects.end(), closestGO));
+        Scene::sGameObjects.erase(std::remove(Scene::sGameObjects.begin(), Scene::sGameObjects.end(), closestGO));
         delete closestGO;
         closestGO = nullptr;
     }

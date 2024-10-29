@@ -35,4 +35,19 @@ void RectangleCollider::Update(float deltaTime)
 {
 	colRect.x = (int)parentGO->transform.position.x - colRect.w / 2;
 	colRect.y = (int)parentGO->transform.position.y + colRect.h / 2;
+
+	for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
+		if (Scene::sRectangleColliderPool.GetPoolArrayItemInUse(i) && 
+			this != Scene::sRectangleColliderPool.GetPoolArrayItem(i)) {
+			if (CheckCollision(Scene::sRectangleColliderPool.GetPoolArrayItem(i))) {
+				Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = true;
+				isColliding = true;
+				return;
+			}
+			else {
+				Scene::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = false;
+				isColliding = false;
+			}
+		}
+	}
 }

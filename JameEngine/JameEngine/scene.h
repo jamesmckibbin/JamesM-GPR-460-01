@@ -8,6 +8,7 @@
 
 class Scene {
 public:
+    static std::vector<GameObject*> sGameObjects;
     static ComponentPool<PlayerController> sPlayerControllerPool;
     static ComponentPool<RectangleRenderer> sRectangleRendererPool;
     static ComponentPool<RectangleCollider> sRectangleColliderPool;
