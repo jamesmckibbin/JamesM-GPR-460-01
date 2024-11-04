@@ -10,8 +10,9 @@
 void DoDebugInput();
 GameObject* AddRandomGameObject();
 void DeleteClosestGameObject();
+RectangleCollider** ReturnCollisions(RectangleCollider* colToCheck);
 
-StackAllocator frameAllocator(32);
+StackAllocator frameAllocator(1028);
 
 GameObject* background;
 GameObject* player;
@@ -54,10 +55,6 @@ int main(int argc, char* argv[])
 
         // FRAME ALLOCATION START
         char* frameCounter = frameAllocator.Alloc<char>();
-        RectangleCollider* colliders = frameAllocator.AllocArray<RectangleCollider>(Scene::sRectangleColliderPool.GetSize());
-        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
-            colliders[i] = *Scene::sRectangleColliderPool.GetPoolArrayItem(i);
-        }
 
         // SDL EVENTS
         SDL_Event event;
@@ -188,6 +185,13 @@ void DoDebugInput() {
         }
         debugKeyDown = true;
     }
+    // PRINT NUM COLLISIONS WITH PLAYER
+    else if (keyboard[SDL_SCANCODE_Q]) {
+        if (!debugKeyDown) {
+            ReturnCollisions(player->GetCollider());
+        }
+        debugKeyDown = true;
+    }
     // RESET ON NO BUTTONS PRESSED
     else if (debugKeyDown) {
         debugKeyDown = false;
@@ -218,6 +222,7 @@ GameObject* AddRandomGameObject() {
         return nullptr;
     }
 }
+
 void DeleteClosestGameObject() {
     GameObject* closestGO = nullptr;
     for (GameObject* obj : Scene::sGameObjects) {
@@ -237,4 +242,21 @@ void DeleteClosestGameObject() {
         delete closestGO;
         closestGO = nullptr;
     }
+}
+
+RectangleCollider** ReturnCollisions(RectangleCollider* colToCheck) {
+    RectangleCollider** colliders = frameAllocator.AllocArray<RectangleCollider*>(Scene::sRectangleColliderPool.GetSize());
+    int nextIndex = 0;
+    if (colliders != nullptr) {
+        for (int i = 0; i < Scene::sRectangleColliderPool.GetSize(); i++) {
+            if (colToCheck->CheckCollision(Scene::sRectangleColliderPool.GetPoolArrayItem(i)) && 
+                colToCheck != Scene::sRectangleColliderPool.GetPoolArrayItem(i)) {
+                colliders[nextIndex] = Scene::sRectangleColliderPool.GetPoolArrayItem(i);
+                nextIndex++;
+            }
+        }
+    }
+    std::string printString = "Num of collisions with checked collider: " + std::to_string(nextIndex);
+    std::cout << printString << std::endl;
+    return colliders;
 }
