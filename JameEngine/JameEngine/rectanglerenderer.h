@@ -2,7 +2,6 @@
 
 #include "SDL.h"
 
-#include "transform.h"
 #include "component.h"
 
 class RectangleRenderer : public Component

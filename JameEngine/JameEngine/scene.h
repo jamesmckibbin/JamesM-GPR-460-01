@@ -1,16 +1,28 @@
 #pragma once
 
-#include "componentpool.h"
-#include "rectanglerenderer.h"
-#include "rectanglecollider.h"
-#include "playercontroller.h"
-#include "collidercolorchanger.h"
+#include "stackallocator.h"
+#include "gameobject.h"
 
 class Scene {
 public:
-    static std::vector<GameObject*> sGameObjects;
-    static ComponentPool<PlayerController> sPlayerControllerPool;
-    static ComponentPool<RectangleRenderer> sRectangleRendererPool;
-    static ComponentPool<RectangleCollider> sRectangleColliderPool;
-    static ComponentPool<ColliderColorChanger> sColliderColorChangerPool;
+    Scene();
+    ~Scene();
+
+    void Init();
+    void Destroy();
+    bool Loop(SDL_Renderer* renderer);
+    void DoDebugInput();
+
+    GameObject* AddRandomGameObject();
+    void DeleteClosestGameObject();
+    RectangleCollider** ReturnCollisions(RectangleCollider* colToCheck);
+
+    std::vector<GameObject*> activeGameObjects;
+private:
+    GameObject* background = nullptr;
+    GameObject* player = nullptr;
+    Uint32 lastFrameStartTime, deltaTime = 1;
+    bool debugKeyDown = false;
+    bool printFPS = false;
+    bool chaosMode = false;
 };

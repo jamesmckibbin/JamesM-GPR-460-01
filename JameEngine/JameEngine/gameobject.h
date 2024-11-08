@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "scene.h"
+#include "componentpool.h"
 
 class GameObject
 {
@@ -20,16 +20,16 @@ public:
 
     ~GameObject() {
         if (renderer != nullptr) {
-            Scene::sRectangleRendererPool.Delete(renderer);
+            GameObject::sRectangleRendererPool.Delete(renderer);
         }
         if (collider != nullptr) {
-            Scene::sRectangleColliderPool.Delete(collider);
+            GameObject::sRectangleColliderPool.Delete(collider);
         }
         if (player != nullptr) {
-            Scene::sPlayerControllerPool.Delete(player);
+            GameObject::sPlayerControllerPool.Delete(player);
         }
         if (colorChanger != nullptr) {
-            Scene::sColliderColorChangerPool.Delete(colorChanger);
+            GameObject::sColliderColorChangerPool.Delete(colorChanger);
         }
     }
 
@@ -43,6 +43,11 @@ public:
     PlayerController* CreatePlayerController(float moveSpeed);
     ColliderColorChanger* GetColliderColorChanger() { return colorChanger; }
     ColliderColorChanger* CreateColliderColorChanger(Vector3 color1, Vector3 color2);
+
+    static ComponentPool<PlayerController> sPlayerControllerPool;
+    static ComponentPool<RectangleRenderer> sRectangleRendererPool;
+    static ComponentPool<RectangleCollider> sRectangleColliderPool;
+    static ComponentPool<ColliderColorChanger> sColliderColorChangerPool;
 
 protected:
     RectangleRenderer* renderer = nullptr;

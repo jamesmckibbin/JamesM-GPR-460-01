@@ -1,4 +1,5 @@
 #include "collidercolorchanger.h"
+
 #include "gameobject.h"
 
 ColliderColorChanger::ColliderColorChanger()
