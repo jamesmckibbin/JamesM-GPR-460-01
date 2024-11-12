@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stackallocator.h"
-#include "gameobject.h"
+#include "level.h"
 
 class Scene {
 public:
@@ -12,6 +12,8 @@ public:
     void Destroy();
     bool Loop(SDL_Renderer* renderer);
     void DoDebugInput();
+
+    bool LoadLevel(std::string filename);
 
     GameObject* AddRandomGameObject();
     void DeleteClosestGameObject();

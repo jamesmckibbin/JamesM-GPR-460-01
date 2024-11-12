@@ -28,6 +28,14 @@ void Scene::Init()
     player->CreateCollider(20.f, 20.f);
     player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
     activeGameObjects.push_back(player);
+
+    std::string levelInput;
+    puts("Enter the name of level you want to load: ");
+    std::cin >> levelInput;
+
+    if (!LoadLevel(levelInput)) {
+        puts("Level was not found or could not be loaded");
+    }
 }
 
 void Scene::Destroy()
@@ -78,7 +86,7 @@ bool Scene::Loop(SDL_Renderer* renderer)
     if (chaosMode) {
         switch (rand() % 2 + 1) {
         case 1:
-            AddRandomGameObject();
+            Scene::AddRandomGameObject();
             break;
         case 2:
             DeleteClosestGameObject();
@@ -174,6 +182,13 @@ void Scene::DoDebugInput()
     else if (debugKeyDown) {
         debugKeyDown = false;
     }
+}
+
+bool Scene::LoadLevel(std::string filename)
+{
+    Level newLevel = Level();
+    newLevel.LoadLevelFromFile(filename);
+    return true;
 }
 
 GameObject* Scene::AddRandomGameObject()
