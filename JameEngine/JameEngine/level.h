@@ -8,5 +8,5 @@ class Level {
 public:
 	void LoadLevelFromFile(std::string filename);
 
-	std::unordered_map<int, int> loadedComponents;
+	std::vector<GameObject*> loadedGameObjects;
 };

@@ -22,15 +22,8 @@ void Scene::Init()
     background->CreateRenderer(SCREENWIDTH, SCREENHEIGHT, Vector3{ 255.f, 255.f, 255.f });
     activeGameObjects.push_back(background);
 
-    player = new GameObject(Vector3{ SCREENWIDTH / 2, SCREENHEIGHT / 2, 0.f });
-    player->CreateRenderer(20.f, 20.f, Vector3{ 255.f, 0.f, 0.f });
-    player->CreatePlayerController(0.1f);
-    player->CreateCollider(20.f, 20.f);
-    player->CreateColliderColorChanger(Vector3{ 255.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f });
-    activeGameObjects.push_back(player);
-
     std::string levelInput;
-    puts("Enter the name of level you want to load: ");
+    puts("Enter the name of level you want to load (no file type extension): ");
     std::cin >> levelInput;
 
     if (!LoadLevel(levelInput)) {
@@ -187,7 +180,17 @@ void Scene::DoDebugInput()
 bool Scene::LoadLevel(std::string filename)
 {
     Level newLevel = Level();
-    newLevel.LoadLevelFromFile(filename);
+    newLevel.LoadLevelFromFile(filename + ".txt");
+    for (int i = 0; i < newLevel.loadedGameObjects.size(); i++)
+    {
+        if (i == 0) {
+            player = newLevel.loadedGameObjects[i];
+        }
+        else {
+            activeGameObjects.push_back(newLevel.loadedGameObjects[i]);
+        }
+    }
+    
     return true;
 }
 
