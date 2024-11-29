@@ -34,7 +34,7 @@ bool RectangleCollider::CheckCollision(RectangleCollider* other)
 void RectangleCollider::Update(float deltaTime)
 {
 	colRect.x = (int)parentGO->transform.position.x - colRect.w / 2;
-	colRect.y = (int)parentGO->transform.position.y + colRect.h / 2;
+	colRect.y = (int)parentGO->transform.position.y - colRect.h / 2;
 
 	for (int i = 0; i < GameObject::sRectangleColliderPool.GetSize(); i++) {
 		if (GameObject::sRectangleColliderPool.GetPoolArrayItemInUse(i) && 

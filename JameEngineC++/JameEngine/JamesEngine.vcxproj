@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\james.mckibbin\Documents\Repos\JamesM-GPR-460-01\JameEngine\SDL2-2.30.7\SDL2-2.30.7\include;C:\Dev\Repositories\JamesM-GPR-460-01\JameEngine\SDL2-2.30.7\SDL2-2.30.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\ponyp\Documents\Repos\JamesM-GPR-460-01\JameEngineC++\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,11 +166,11 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\SDL2-2.30.7\SDL2-2.30.7\VisualC\x64\Debug\SDL2.lib" />
-    <Library Include="..\SDL2-2.30.7\SDL2-2.30.7\VisualC\x64\Debug\SDL2main.lib" />
+    <Text Include="level0.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="level0.txt" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

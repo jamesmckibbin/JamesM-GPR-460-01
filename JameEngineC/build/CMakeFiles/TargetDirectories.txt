@@ -1,0 +1,3 @@
+C:/Users/ponyp/Documents/Repos/JamesM-GPR-460-01/JameEngineC/build/CMakeFiles/JameEngineC.dir
+C:/Users/ponyp/Documents/Repos/JamesM-GPR-460-01/JameEngineC/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/ponyp/Documents/Repos/JamesM-GPR-460-01/JameEngineC/build/CMakeFiles/ZERO_CHECK.dir

@@ -104,12 +104,12 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\SDL2-2.30.7\SDL2-2.30.7\VisualC\x64\Debug\SDL2.lib" />
-    <Library Include="..\SDL2-2.30.7\SDL2-2.30.7\VisualC\x64\Debug\SDL2main.lib" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="level0.txt">
       <Filter>Source Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
   </ItemGroup>
 </Project>
