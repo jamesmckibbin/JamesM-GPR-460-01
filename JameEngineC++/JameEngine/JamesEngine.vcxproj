@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\ponyp\Documents\Repos\JamesM-GPR-460-01\JameEngineC++\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\james.mckibbin\Documents\Repos\JamesM-GPR-460-01\JameEngineC++\SDL2\include;C:\Users\ponyp\Documents\Repos\JamesM-GPR-460-01\JameEngineC++\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

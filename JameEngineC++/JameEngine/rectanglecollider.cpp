@@ -40,12 +40,10 @@ void RectangleCollider::Update(float deltaTime)
 		if (GameObject::sRectangleColliderPool.GetPoolArrayItemInUse(i) && 
 			this != GameObject::sRectangleColliderPool.GetPoolArrayItem(i)) {
 			if (CheckCollision(GameObject::sRectangleColliderPool.GetPoolArrayItem(i))) {
-				GameObject::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = true;
 				isColliding = true;
 				return;
 			}
 			else {
-				GameObject::sRectangleColliderPool.GetPoolArrayItem(i)->isColliding = false;
 				isColliding = false;
 			}
 		}
