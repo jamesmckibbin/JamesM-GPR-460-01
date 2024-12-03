@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "scene.h"
+#include "stage.h"
 
 int main(int argc, char* argv[])
 {
@@ -17,13 +17,13 @@ int main(int argc, char* argv[])
 
     srand(time(NULL));
 
-    Scene* scene = new Scene();
+    Stage* stage = new Stage();
 
     while (loop) {
-        loop = scene->Loop(renderer);
+        loop = stage->Loop(renderer);
     }
 
-    scene->Destroy();
+    stage->Destroy();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

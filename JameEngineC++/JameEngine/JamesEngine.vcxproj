@@ -142,7 +142,7 @@
     <ClInclude Include="rectanglecollider.h" />
     <ClInclude Include="rectanglerenderer.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="scene.h" />
+    <ClInclude Include="stage.h" />
     <ClInclude Include="stackallocator.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utils.h" />
@@ -155,7 +155,7 @@
     <ClCompile Include="playercontroller.cpp" />
     <ClCompile Include="rectanglecollider.cpp" />
     <ClCompile Include="rectanglerenderer.cpp" />
-    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="stage.cpp" />
     <ClCompile Include="stackallocator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,11 +166,11 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="level0.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
     <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\level0.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

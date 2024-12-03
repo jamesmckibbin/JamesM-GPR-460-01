@@ -13,7 +13,9 @@ public:
     bool Loop(SDL_Renderer* renderer);
     void DoDebugInput();
 
-    bool LoadLevel(std::string filename);
+    void LoadNewLevel();
+    void LoadLevelFromFile(std::string filename);
+    void UnloadLevel();
 
     GameObject* AddRandomGameObject();
     void DeleteClosestGameObject();
@@ -21,6 +23,8 @@ public:
 
     std::vector<GameObject*> activeGameObjects;
 private:
+    std::vector<Level*> storedLevels;
+
     GameObject* background = nullptr;
     GameObject* player = nullptr;
     Uint32 lastFrameStartTime, deltaTime = 1;

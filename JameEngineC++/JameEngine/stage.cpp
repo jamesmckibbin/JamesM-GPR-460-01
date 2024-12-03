@@ -20,15 +20,8 @@ void Stage::Init()
 {
     background = new GameObject(Vector3{ SCREENWIDTH / 2, SCREENHEIGHT / 2, 0.f });
     background->CreateRenderer(SCREENWIDTH, SCREENHEIGHT, Vector3{ 255.f, 255.f, 255.f });
-    activeGameObjects.push_back(background);
 
-    std::string levelInput;
-    puts("Enter the name of the level file you want to load: ");
-    std::cin >> levelInput;
-
-    if (!LoadLevel(levelInput)) {
-        puts("Level was not found or could not be loaded");
-    }
+    LoadNewLevel();
 }
 
 void Stage::Destroy()
@@ -38,6 +31,11 @@ void Stage::Destroy()
         obj = nullptr;
     }
     activeGameObjects.clear();
+
+    delete player;
+    player = nullptr;
+    delete background;
+    background = nullptr;
 }
 
 bool Stage::Loop(SDL_Renderer* renderer)
@@ -141,10 +139,10 @@ void Stage::DoDebugInput()
             debugKeyDown = true;
         }
     }
-    // FILL EACH POOL
+    // LOAD NEW LEVEL
     else if (keyboard[SDL_SCANCODE_F]) {
         if (!debugKeyDown) {
-            // (should fill the pool here :) )
+            LoadNewLevel();
             debugKeyDown = true;
         }
     }
@@ -177,21 +175,70 @@ void Stage::DoDebugInput()
     }
 }
 
-bool Stage::LoadLevel(std::string filename)
+void Stage::LoadNewLevel()
 {
-    Level newLevel = Level();
-    newLevel.LoadLevelFromFile(LEVELS_PATH + filename);
-    for (int i = 0; i < newLevel.loadedGameObjects.size(); i++)
-    {
-        if (i == 0) {
-            player = newLevel.loadedGameObjects[i];
-        }
-        else {
-            activeGameObjects.push_back(newLevel.loadedGameObjects[i]);
+    // Load menu options of pre-exisiting levels
+    char levelInput;
+    std::cout << "Choose a level ID to load:" << std::endl;
+    for (Level* level : storedLevels) {
+        std::cout << "[" << level->levelID << "]" << level->levelName << std::endl;
+    }
+    std::cout << "[" << '&' << "]" << " Load New Level From File" << std::endl;
+    std::cin >> levelInput;
+
+    // Resolve input
+    if (levelInput == '&') {
+        // New level needed from input
+        std::string newLevelInput;
+        std::cout << "Enter the filename of the new level you would like to load:" << std::endl;
+        std::cin >> newLevelInput;
+        LoadLevelFromFile(newLevelInput);
+    }
+    else {
+        for (Level* level : storedLevels) {
+            if (levelInput == storedLevels[levelInput]->levelID) {
+                UnloadLevel();
+                for (int i = 0; i < storedLevels[levelInput]->loadedGameObjects.size(); i++) {
+                    if (i == 0) {
+                        player = storedLevels[levelInput]->loadedGameObjects[i];
+                    }
+                    else {
+                        activeGameObjects.push_back(storedLevels[levelInput]->loadedGameObjects[i]);
+                    }
+                }
+            }
         }
     }
-    
-    return true;
+}
+
+void Stage::LoadLevelFromFile(std::string filename)
+{
+    Level* newLevel = new Level();
+    if (newLevel->ReadLevelDataFromFile(LEVELS_PATH + filename)) {
+        UnloadLevel();
+        for (int i = 0; i < newLevel->loadedGameObjects.size(); i++) {
+            if (i == 0) {
+                player = newLevel->loadedGameObjects[i];
+            } else {
+                activeGameObjects.push_back(newLevel->loadedGameObjects[i]);
+            }
+        }
+        storedLevels.push_back(newLevel);
+    }
+}
+
+void Stage::UnloadLevel() 
+{
+    for (GameObject* obj : activeGameObjects) {
+        delete obj;
+        obj = nullptr;
+    }
+    activeGameObjects.clear();
+
+    delete player;
+    player = nullptr;
+
+
 }
 
 GameObject* Stage::AddRandomGameObject()

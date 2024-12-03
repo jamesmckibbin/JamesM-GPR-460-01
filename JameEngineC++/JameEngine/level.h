@@ -6,8 +6,7 @@
 
 class Level {
 public:
-	void ReadLevelNameAndID(std::string filename);
-	void LoadLevelFromFile(std::string filename);
+	bool ReadLevelDataFromFile(std::string filename);
 
 	int levelID;
 	std::string levelName;

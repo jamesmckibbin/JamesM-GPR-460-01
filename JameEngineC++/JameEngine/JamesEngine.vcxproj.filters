@@ -51,7 +51,7 @@
     <ClInclude Include="componentpool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
+    <ClInclude Include="stage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stackallocator.h">
@@ -80,7 +80,7 @@
     <ClCompile Include="collidercolorchanger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene.cpp">
+    <ClCompile Include="stage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stackallocator.cpp">
@@ -104,12 +104,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="level0.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
     <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\level0.txt" />
   </ItemGroup>
 </Project>
