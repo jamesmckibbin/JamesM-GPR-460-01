@@ -3,6 +3,8 @@
 #define SCREENWIDTH 640
 #define SCREENHEIGHT 480
 
+#define LEVELS_PATH "levels/"
+
 struct Vector3 {
 	float x, y, z;
 };

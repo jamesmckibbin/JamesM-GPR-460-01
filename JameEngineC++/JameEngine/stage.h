@@ -3,10 +3,10 @@
 #include "stackallocator.h"
 #include "level.h"
 
-class Scene {
+class Stage {
 public:
-    Scene();
-    ~Scene();
+    Stage();
+    ~Stage();
 
     void Init();
     void Destroy();

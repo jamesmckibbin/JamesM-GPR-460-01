@@ -1,29 +1,29 @@
-#include "scene.h"
+#include "stage.h"
 
 #include <vector>
 #include <string>
 
 StackAllocator frameAllocator(1028);
 
-Scene::Scene()
+Stage::Stage()
 {
     activeGameObjects = std::vector<GameObject*>();
     Init();
 }
 
-Scene::~Scene()
+Stage::~Stage()
 {
     Destroy();
 }
 
-void Scene::Init()
+void Stage::Init()
 {
     background = new GameObject(Vector3{ SCREENWIDTH / 2, SCREENHEIGHT / 2, 0.f });
     background->CreateRenderer(SCREENWIDTH, SCREENHEIGHT, Vector3{ 255.f, 255.f, 255.f });
     activeGameObjects.push_back(background);
 
     std::string levelInput;
-    puts("Enter the name of level you want to load (no file type extension): ");
+    puts("Enter the name of the level file you want to load: ");
     std::cin >> levelInput;
 
     if (!LoadLevel(levelInput)) {
@@ -31,7 +31,7 @@ void Scene::Init()
     }
 }
 
-void Scene::Destroy()
+void Stage::Destroy()
 {
     for (GameObject* obj : activeGameObjects) {
         delete obj;
@@ -40,7 +40,7 @@ void Scene::Destroy()
     activeGameObjects.clear();
 }
 
-bool Scene::Loop(SDL_Renderer* renderer)
+bool Stage::Loop(SDL_Renderer* renderer)
 {
     // FRAME TIME START
     lastFrameStartTime = SDL_GetTicks();
@@ -79,7 +79,7 @@ bool Scene::Loop(SDL_Renderer* renderer)
     if (chaosMode) {
         switch (rand() % 2 + 1) {
         case 1:
-            Scene::AddRandomGameObject();
+            Stage::AddRandomGameObject();
             break;
         case 2:
             DeleteClosestGameObject();
@@ -117,7 +117,7 @@ bool Scene::Loop(SDL_Renderer* renderer)
     return true;
 }
 
-void Scene::DoDebugInput()
+void Stage::DoDebugInput()
 {
     const Uint8* keyboard = SDL_GetKeyboardState(NULL);
     // NEW GAME OBJECT
@@ -177,10 +177,10 @@ void Scene::DoDebugInput()
     }
 }
 
-bool Scene::LoadLevel(std::string filename)
+bool Stage::LoadLevel(std::string filename)
 {
     Level newLevel = Level();
-    newLevel.LoadLevelFromFile(filename + ".txt");
+    newLevel.LoadLevelFromFile(LEVELS_PATH + filename);
     for (int i = 0; i < newLevel.loadedGameObjects.size(); i++)
     {
         if (i == 0) {
@@ -194,7 +194,7 @@ bool Scene::LoadLevel(std::string filename)
     return true;
 }
 
-GameObject* Scene::AddRandomGameObject()
+GameObject* Stage::AddRandomGameObject()
 {
     // Set up random values
     Vector3 randomLocation = { player->transform.position.x + rand() % 100 - 50, player->transform.position.y + rand() % 100 - 50, 0.f };
@@ -220,7 +220,7 @@ GameObject* Scene::AddRandomGameObject()
     }
 }
 
-void Scene::DeleteClosestGameObject()
+void Stage::DeleteClosestGameObject()
 {
     GameObject* closestGO = nullptr;
     for (GameObject* obj : activeGameObjects) {
@@ -242,7 +242,7 @@ void Scene::DeleteClosestGameObject()
     }
 }
 
-RectangleCollider** Scene::ReturnCollisions(RectangleCollider* colToCheck)
+RectangleCollider** Stage::ReturnCollisions(RectangleCollider* colToCheck)
 {
     RectangleCollider** colliders = frameAllocator.AllocArray<RectangleCollider*>(GameObject::sRectangleColliderPool.GetSize());
     int nextIndex = 0;

@@ -19,6 +19,16 @@ void Level::LoadLevelFromFile(std::string filename)
 		if (id == '*') {
 			std::getline(levelFile, commentBuffer);
 		}
+		// Level ID read
+		else if (id == '-') {
+			levelFile >> id;
+			levelID = id;
+		}
+		// Level name read
+		else if (id == '=') {
+			std::getline(levelFile, levelName);
+			std::cout << levelName << std::endl;
+		}
 		// Game object read
 		else if (id == '+') {
 			if (newGO != nullptr) {
