@@ -192,38 +192,48 @@ void Stage::LoadNewLevel()
         std::string newLevelInput;
         std::cout << "Enter the filename of the new level you would like to load:" << std::endl;
         std::cin >> newLevelInput;
-        LoadLevelFromFile(newLevelInput);
+        LoadLevelFromFile(newLevelInput, 0, false);
     }
     else {
+        levelInput -= '0';
         for (Level* level : storedLevels) {
             if (levelInput == storedLevels[levelInput]->levelID) {
-                UnloadLevel();
-                for (int i = 0; i < storedLevels[levelInput]->loadedGameObjects.size(); i++) {
-                    if (i == 0) {
-                        player = storedLevels[levelInput]->loadedGameObjects[i];
-                    }
-                    else {
-                        activeGameObjects.push_back(storedLevels[levelInput]->loadedGameObjects[i]);
-                    }
-                }
+                LoadLevelFromFile(storedLevels[levelInput]->levelFileName, levelInput, true);
             }
         }
     }
 }
 
-void Stage::LoadLevelFromFile(std::string filename)
+void Stage::LoadLevelFromFile(std::string filename, int levelInput, bool exists)
 {
-    Level* newLevel = new Level();
-    if (newLevel->ReadLevelDataFromFile(LEVELS_PATH + filename)) {
+    if (exists) {
         UnloadLevel();
-        for (int i = 0; i < newLevel->loadedGameObjects.size(); i++) {
-            if (i == 0) {
-                player = newLevel->loadedGameObjects[i];
-            } else {
-                activeGameObjects.push_back(newLevel->loadedGameObjects[i]);
+        if (storedLevels[levelInput]->ReadLevelDataFromFile(LEVELS_PATH + filename)) {
+            for (int i = 0; i < storedLevels[levelInput]->loadedGameObjects.size(); i++) {
+                if (i == 0) {
+                    player = storedLevels[levelInput]->loadedGameObjects[i];
+                }
+                else {
+                    activeGameObjects.push_back(storedLevels[levelInput]->loadedGameObjects[i]);
+                }
             }
         }
-        storedLevels.push_back(newLevel);
+    }
+    else {
+        Level* newLevel = new Level();
+        UnloadLevel();
+        if (newLevel->ReadLevelDataFromFile(LEVELS_PATH + filename)) {
+            newLevel->levelFileName = filename;
+            for (int i = 0; i < newLevel->loadedGameObjects.size(); i++) {
+                if (i == 0) {
+                    player = newLevel->loadedGameObjects[i];
+                }
+                else {
+                    activeGameObjects.push_back(newLevel->loadedGameObjects[i]);
+                }
+            }
+            storedLevels.push_back(newLevel);
+        }
     }
 }
 
@@ -237,8 +247,6 @@ void Stage::UnloadLevel()
 
     delete player;
     player = nullptr;
-
-
 }
 
 GameObject* Stage::AddRandomGameObject()

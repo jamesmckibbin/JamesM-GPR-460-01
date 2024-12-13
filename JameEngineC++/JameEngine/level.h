@@ -10,5 +10,6 @@ public:
 
 	int levelID;
 	std::string levelName;
+	std::string levelFileName;
 	std::vector<GameObject*> loadedGameObjects;
 };

@@ -14,7 +14,7 @@ public:
     void DoDebugInput();
 
     void LoadNewLevel();
-    void LoadLevelFromFile(std::string filename);
+    void LoadLevelFromFile(std::string filename, int levelInput, bool exists);
     void UnloadLevel();
 
     GameObject* AddRandomGameObject();

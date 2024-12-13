@@ -104,10 +104,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
-    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
+    <Text Include="levels\level0.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="levels\level0.txt" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
   </ItemGroup>
 </Project>
