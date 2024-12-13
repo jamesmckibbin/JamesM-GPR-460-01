@@ -5,11 +5,13 @@
 
 PlayerController::PlayerController()
 {
+    type = 2;
     parentGO = nullptr;
 }
 
 PlayerController::PlayerController(GameObject* obj, float moveSpeed)
 {
+    type = 2;
     parentGO = obj;
     speed = moveSpeed;
 }

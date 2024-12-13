@@ -31,4 +31,5 @@ private:
     bool debugKeyDown = false;
     bool printFPS = false;
     bool chaosMode = false;
+    bool trianglesLoaded = false;
 };

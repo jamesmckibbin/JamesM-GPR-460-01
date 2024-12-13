@@ -2,11 +2,13 @@
 
 RectangleRenderer::RectangleRenderer()
 {
+	type = 0;
 	parentGO = nullptr;
 }
 
 RectangleRenderer::RectangleRenderer(GameObject* obj)
 {
+	type = 0;
 	parentGO = obj;
 	width = 10.f;
 	height = 10.f;
@@ -15,6 +17,7 @@ RectangleRenderer::RectangleRenderer(GameObject* obj)
 
 RectangleRenderer::RectangleRenderer(GameObject* obj, float newwidth, float newheight, Vector3 newcolor)
 {
+	type = 0;
 	parentGO = obj;
 	width = newwidth;
 	height = newheight;

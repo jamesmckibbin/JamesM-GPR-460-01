@@ -4,11 +4,13 @@
 
 RectangleCollider::RectangleCollider()
 {
+	type = 1;
 	parentGO = nullptr;
 }
 
 RectangleCollider::RectangleCollider(GameObject* obj)
 {
+	type = 1;
 	parentGO = obj;
 	colRect.x = 5;
 	colRect.y = 5;
@@ -18,6 +20,7 @@ RectangleCollider::RectangleCollider(GameObject* obj)
 
 RectangleCollider::RectangleCollider(GameObject* obj, float width, float height)
 {
+	type = 1;
 	parentGO = obj;
 	colRect.x = (int)obj->transform.position.x + (int)width / 2;
 	colRect.y = (int)obj->transform.position.y + (int)height / 2;

@@ -4,6 +4,7 @@
 #include "rectanglecollider.h"
 #include "playercontroller.h"
 #include "collidercolorchanger.h"
+#include "trianglerenderer.h"
 
 #include <assert.h>
 #include <vector>

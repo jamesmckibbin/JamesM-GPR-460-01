@@ -46,7 +46,7 @@ bool Level::ReadLevelDataFromFile(std::string filename)
 			switch (id) {
 			case '0':
 				levelFile >> w >> h >> r >> g >> b;
-				newGO->CreateRenderer(w, h, Vector3{r, g, b});
+				newGO->CreateRectangleRenderer(w, h, Vector3{r, g, b});
 				break;
 			case '1':
 				levelFile >> w >> h;
@@ -59,6 +59,10 @@ bool Level::ReadLevelDataFromFile(std::string filename)
 			case '3':
 				levelFile >> r >> g >> b >> r2 >> g2 >> b2;
 				newGO->CreateColliderColorChanger(Vector3{r, g, b}, Vector3{r2, g2, b2});
+				break;
+			case '4':
+				levelFile >> w >> r >> g >> b;
+				newGO->CreateTriangleRenderer(w, Vector3{ r, g, b });
 				break;
 
 			default:

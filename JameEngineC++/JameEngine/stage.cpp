@@ -19,7 +19,7 @@ Stage::~Stage()
 void Stage::Init()
 {
     background = new GameObject(Vector3{ SCREENWIDTH / 2, SCREENHEIGHT / 2, 0.f });
-    background->CreateRenderer(SCREENWIDTH, SCREENHEIGHT, Vector3{ 255.f, 255.f, 255.f });
+    background->CreateRectangleRenderer(SCREENWIDTH, SCREENHEIGHT, Vector3{ 255.f, 255.f, 255.f });
 
     LoadNewLevel();
 }
@@ -95,6 +95,12 @@ bool Stage::Loop(SDL_Renderer* renderer)
                 renderer, GameObject::sRectangleRendererPool.GetPoolArrayItem(i)->GetOwningGameObject()->transform.position);
         }
     }
+    for (int i = 0; i < GameObject::sTriangleRendererPool.GetSize(); i++) {
+        if (GameObject::sTriangleRendererPool.GetPoolArrayItemInUse(i)) {
+            GameObject::sTriangleRendererPool.GetPoolArrayItem(i)->Draw(
+                renderer, GameObject::sTriangleRendererPool.GetPoolArrayItem(i)->GetOwningGameObject()->transform.position);
+        }
+    }
     SDL_RenderPresent(renderer);
 
     // FPS COUNTER
@@ -166,6 +172,17 @@ void Stage::DoDebugInput()
     else if (keyboard[SDL_SCANCODE_Q]) {
         if (!debugKeyDown) {
             ReturnCollisions(player->GetCollider());
+        }
+        debugKeyDown = true;
+    }
+    // LOAD TRIANGLES DLL
+    else if (keyboard[SDL_SCANCODE_I]) {
+        if (!debugKeyDown) {
+            for (GameObject* obj : activeGameObjects) {
+                DeleteClosestGameObject();
+            }
+            trianglesLoaded = !trianglesLoaded;
+            TriangleRenderer::LoadTrianglesDLL(trianglesLoaded);
         }
         debugKeyDown = true;
     }
@@ -261,17 +278,33 @@ GameObject* Stage::AddRandomGameObject()
     GameObject* newGO = new GameObject(randomLocation);
 
     // If possible, create renderer and collider component
-    if (GameObject::sRectangleRendererPool.CanCreateComponent() &&
-        GameObject::sRectangleColliderPool.CanCreateComponent()) {
-        newGO->CreateRenderer(10.f, 10.f, randomColor);
-        newGO->CreateCollider(10.f, 10.f);
-        activeGameObjects.push_back(newGO);
-        return newGO;
+    if (trianglesLoaded) {
+        if (GameObject::sTriangleRendererPool.CanCreateComponent() &&
+            GameObject::sRectangleColliderPool.CanCreateComponent()) {
+            newGO->CreateTriangleRenderer(10.f, randomColor);
+            newGO->CreateCollider(10.f, 10.f);
+            activeGameObjects.push_back(newGO);
+            return newGO;
+        }
+        else {
+            delete newGO;
+            newGO = nullptr;
+            return nullptr;
+        }
     }
     else {
-        delete newGO;
-        newGO = nullptr;
-        return nullptr;
+        if (GameObject::sRectangleRendererPool.CanCreateComponent() &&
+            GameObject::sRectangleColliderPool.CanCreateComponent()) {
+            newGO->CreateRectangleRenderer(10.f, 10.f, randomColor);
+            newGO->CreateCollider(10.f, 10.f);
+            activeGameObjects.push_back(newGO);
+            return newGO;
+        }
+        else {
+            delete newGO;
+            newGO = nullptr;
+            return nullptr;
+        }
     }
 }
 

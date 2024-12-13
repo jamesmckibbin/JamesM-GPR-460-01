@@ -60,6 +60,9 @@
     <ClInclude Include="level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="trianglerenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +92,9 @@
     <ClCompile Include="level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="trianglerenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JamesEngine.rc">
@@ -107,7 +113,10 @@
     <Text Include="levels\level0.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
     <Library Include="..\SDL2\VisualC\x64\Debug\SDL2main.lib" />
+    <Library Include="..\SDL2\VisualC\x64\Debug\SDL2.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TrianglesDLL.dll" />
   </ItemGroup>
 </Project>
